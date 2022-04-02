@@ -23,13 +23,13 @@ user = root
 password = 
 database = trading_bot
 ```
-Get your Coindcx Api key and secret from your profile and fill it in.
-If you wish recieve push notifications for every buy and sell orders you can fill the pushbullet token.
+Get your Coindcx Api key and secret from your profile and fill it in .env.
+If you wish recieve push notifications for every buy and sell orders you can fill the pushbullet token too or else leave it empty
 
 Get one frome here:
 https://www.pushbullet.com/#settings
 
-Create a mysql database and install trading_bot.sql
+Create a mysql database and install trading_bot.sql and add credentials to your .env
 
 In "pairs" table each row represents a Cryptocurrency data object formatted in a JSON string.
 
