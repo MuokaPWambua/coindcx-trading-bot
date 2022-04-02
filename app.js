@@ -4,52 +4,12 @@ const debug = true
 const mysql = require('mysql2/promise');
 let apiFailureCount = 0
 
-tradingPairs = [
-    {
-        'name': 'matic',
-        'pair': 'B-MATIC_USDT',
-        'symbol': 'MATICUSDT',
-        "target_currency_precision": 1,
-        'tradingUnit': 625,
-        'levels': [[2.43, 'empty'], [2.20, 'empty'], [2.00, 'empty'], [1.82, 'empty'], [1.66, 'empty'], [1.51, 'empty'], [1.37, 'empty'], [1.24, 'empty'], [1.13, 'empty'], [1.03, 'empty'], [.93, 'empty']]
-    }
-
-]
-
-testingDataObj = [{
-    'name': 'matic',
-    'pair': 'B-MATIC_USDT',
-    'symbol': 'MATICUSDT',
-    "target_currency_precision": 1,
-    'tradingUnit': 15,
-    'levels': [[1.721, 'filled'], [1.692, 'empty'], [1.670, 'empty'], [1.647, 'empty'], [1.623, 'empty']]
-}, {
-    'name': 'chainlink',
-    'pair': 'B-LINK_USDT',
-    'symbol': 'LINKUSDT',
-    "target_currency_precision": 2,
-    'tradingUnit': 15,
-    'levels': [[17.98, 'empty'], [17.61, 'empty'], [17.30, 'empty'], [16.93, 'empty']]
-}]
-
-
-
 const checkAndOrder = async (pairObj, con) => {
     const tempPairDataObject = pairObj
 
     while (true) {
 
-        // buyOrderStatus = await apiConnect.createOrder({
-        //     "side": "buy",
-        //     "order_type": "market_order",
-        //     "market": pairObj.symbol,
-        //     "total_quantity": 8.9
-
-        // })
-        // console.log(buyOrderStatus)
-        // process.exit()
-
-        const bars = await apiConnect.getCandles(`https://public.coindcx.com/market_data/candles?pair=${pairObj.pair}&interval=1m&limit=1`);
+        const bars = await apiConnect.getCandles(`https://public.coindcx.com/market_data/candles?pair=${pairObj.pair}&interval=5m&limit=1`);
 
         if (!bars) {
             await apiConnect.sleep(10000)
@@ -62,8 +22,6 @@ const checkAndOrder = async (pairObj, con) => {
         }
 
         apiFailureCount = 0
-
-        console.log(bars);
         console.log(bars[0].high, bars[0].low);
 
         levels = pairObj.levels
@@ -91,51 +49,55 @@ const checkAndOrder = async (pairObj, con) => {
                     })
 
 
-                    // buyOrderStatus = await apiConnect.createOrder({
-                    //     "side": "buy",
-                    //     "order_type": "market_order",
-                    //     "market": pairObj.symbol,
-                    //     "total_quantity": quantity
+                    buyOrderStatus = await apiConnect.createOrder({
+                        "side": "buy",
+                        "order_type": "market_order",
+                        "market": pairObj.symbol,
+                        "total_quantity": quantity
 
-                    // })
+                    })
 
-                    buyOrderStatus = {
-                        orders: [
-                            {
-                                id: '41f74e24-b0fb-11ec-8e2f-1b98e6d5b6d9',
-                                client_order_id: null,
-                                order_type: 'market_order',
-                                side: 'buy',
-                                status: 'open',
-                                fee_amount: 0,
-                                fee: 0.1,
-                                maker_fee: 0.1,
-                                taker_fee: 0.1,
-                                total_quantity: 9,
-                                remaining_quantity: 9,
-                                source: null,
-                                base_currency_name: null,
-                                target_currency_name: null,
-                                base_currency_short_name: null,
-                                target_currency_short_name: null,
-                                base_currency_precision: null,
-                                target_currency_precision: null,
-                                avg_price: 0,
-                                price_per_unit: 1.671,
-                                stop_price: 0,
-                                market: 'MATICUSDT',
-                                time_in_force: 'good_till_cancel',
-                                created_at: 1648735373000,
-                                updated_at: 1648735373000,
-                                trades: null
-                            }
-                        ]
-                    }
+                    //Sample data of buyOrderStatus object
+                    // buyOrderStatus = {
+                    //     orders: [
+                    //         {
+                    //             id: '41f74e24-b0fb-11ec-8e2f-1b98e6d5b6d9',
+                    //             client_order_id: null,
+                    //             order_type: 'market_order',
+                    //             side: 'buy',
+                    //             status: 'open',
+                    //             fee_amount: 0,
+                    //             fee: 0.1,
+                    //             maker_fee: 0.1,
+                    //             taker_fee: 0.1,
+                    //             total_quantity: 9,
+                    //             remaining_quantity: 9,
+                    //             source: null,
+                    //             base_currency_name: null,
+                    //             target_currency_name: null,
+                    //             base_currency_short_name: null,
+                    //             target_currency_short_name: null,
+                    //             base_currency_precision: null,
+                    //             target_currency_precision: null,
+                    //             avg_price: 0,
+                    //             price_per_unit: 1.671,
+                    //             stop_price: 0,
+                    //             market: 'MATICUSDT',
+                    //             time_in_force: 'good_till_cancel',
+                    //             created_at: 1648735373000,
+                    //             updated_at: 1648735373000,
+                    //             trades: null
+                    //         }
+                    //     ]
+                    // }
 
                     if (buyOrderStatus) {
                         if (buyOrderStatus.orders[0].id) {
+
+                            //trigger push notifications
                             await apiConnect.pushBulletNoti(`${pairObj.symbol} Buy order placed`, `price:${levels[i][0]}, quantity:${quantity}`);
                             console.log('entered buyOrderStatus')
+
                             levels[i][1] = 'filled'
                             //update db
 
@@ -147,7 +109,7 @@ const checkAndOrder = async (pairObj, con) => {
                             //add buy entry in orders
                             dt = await con.execute('INSERT INTO `orders`( `order_id`, `side`, `fee_amount`, `quantity`, `price`, `symbol`, `timestamp`) VALUES (?, ?, ?, ?, ?,?,?)', [buyOrderStatus.orders[0].id, buyOrderStatus.orders[0].side, buyOrderStatus.orders[0].fee_amount, buyOrderStatus.orders[0].total_quantity, buyOrderStatus.orders[0].price_per_unit, buyOrderStatus.orders[0].market, buyOrderStatus.orders[0].created_at])
 
-                            //trigger push notifications
+
                             if (debug) console.log(buyOrderStatus)
                         }
 
@@ -170,46 +132,47 @@ const checkAndOrder = async (pairObj, con) => {
 
                         })
 
-                        // sellOrderStatus = await apiConnect.createOrder({
-                        //     "side": "sell",
-                        //     "order_type": "market_order",
-                        //     "market": pairObj.symbol,
-                        //     "total_quantity": quantity
+                        sellOrderStatus = await apiConnect.createOrder({
+                            "side": "sell",
+                            "order_type": "market_order",
+                            "market": pairObj.symbol,
+                            "total_quantity": quantity
 
-                        // })
+                        })
 
-                        sellOrderStatus = {
-                            orders: [
-                                {
-                                    id: '495e0c16-b0fb-11ec-beef-23856932a931',
-                                    client_order_id: null,
-                                    order_type: 'market_order',
-                                    side: 'sell',
-                                    status: 'open',
-                                    fee_amount: 0,
-                                    fee: 0.1,
-                                    maker_fee: 0.1,
-                                    taker_fee: 0.1,
-                                    total_quantity: 9,
-                                    remaining_quantity: 9,
-                                    source: null,
-                                    base_currency_name: null,
-                                    target_currency_name: null,
-                                    base_currency_short_name: null,
-                                    target_currency_short_name: null,
-                                    base_currency_precision: null,
-                                    target_currency_precision: null,
-                                    avg_price: 0,
-                                    price_per_unit: 0,
-                                    stop_price: 0,
-                                    market: 'MATICUSDT',
-                                    time_in_force: 'good_till_cancel',
-                                    created_at: 1648735385000,
-                                    updated_at: 1648735385000,
-                                    trades: null
-                                }
-                            ]
-                        }
+                        // Sample data of sellOrderStatus object
+                        // sellOrderStatus = {
+                        //     orders: [
+                        //         {
+                        //             id: '495e0c16-b0fb-11ec-beef-23856932a931',
+                        //             client_order_id: null,
+                        //             order_type: 'market_order',
+                        //             side: 'sell',
+                        //             status: 'open',
+                        //             fee_amount: 0,
+                        //             fee: 0.1,
+                        //             maker_fee: 0.1,
+                        //             taker_fee: 0.1,
+                        //             total_quantity: 9,
+                        //             remaining_quantity: 9,
+                        //             source: null,
+                        //             base_currency_name: null,
+                        //             target_currency_name: null,
+                        //             base_currency_short_name: null,
+                        //             target_currency_short_name: null,
+                        //             base_currency_precision: null,
+                        //             target_currency_precision: null,
+                        //             avg_price: 0,
+                        //             price_per_unit: 0,
+                        //             stop_price: 0,
+                        //             market: 'MATICUSDT',
+                        //             time_in_force: 'good_till_cancel',
+                        //             created_at: 1648735385000,
+                        //             updated_at: 1648735385000,
+                        //             trades: null
+                        //         }
+                        //     ]
+                        // }
 
                         if (sellOrderStatus) {
                             if (sellOrderStatus.orders[0].id) {
@@ -249,7 +212,7 @@ const master = async (dataObj) => {
     });
 
     var queryDt = await con.execute('SELECT * FROM pairs')
-    console.log(queryDt[0])
+    if (debug) console.log(queryDt[0])
 
     for (elem of queryDt[0]) {
         checkAndOrder(JSON.parse(elem.pairs), con);
@@ -263,7 +226,7 @@ master(testingDataObj)
 
 
 setInterval(function () {
-    console.log(('code is running succesfully!'))
+    console.log(('code is running successfully!'))
     apiConnect.pushBulletNoti('code is running succesfully!')
 }, 60000 * 60 * 24)
 
