@@ -6,15 +6,15 @@ https://github.com/adarsh-chouhan-au8/Effective-DCA-Strategy-Crypto
 
 ## How to use
 ### install packages
-Run npm install it will install all required node modules
+cd to your project root and Run npm install it will install all required node modules
 ```
-sudo apt-get install build-essential
+npm install
 ```
 
 ### configuration
 Create a mysql database and install trading_bot.sql
 
-In pairs table each row represents a Cryptocurrency data object formed in JSON string.
+In pairs table each row represents a Cryptocurrency data object formatted in a JSON string.
 
 Sample data object
 
@@ -28,6 +28,33 @@ Sample data object
     'levels': [[17.98, 'empty'], [17.61, 'empty'], [17.30, 'empty'], [16.93, 'empty']]
 }
 ```
-Here object.levels contains grid data in a 2d array.
+Here object.levels contains grid data in a 2d array. The bot will buy on every grid and will sell on the next higher grid.
 
-Add as many levels and crypto pairs you require.
+Add as many levels and crypto pairs you require. The bot is designed to work simultaneously with multiple pairs.
+
+### Let's run it!
+
+for debugging purposes you can run:
+```
+node app.js
+```
+in order to run node script as a process you need to use a process monitor. There bunch of free options available like forever, monit, PM2, nohup etc
+
+you are free to use any of these. I have included forever in the npm modules so it's already available
+
+So you can start the bot like this:
+```
+forever start app.js 
+```
+Check status of bot:
+```
+forever list
+```
+Stop the bot:
+```
+forever stop app.js
+```
+### learn more about forever
+https://github.com/foreversd/forever
+
+
