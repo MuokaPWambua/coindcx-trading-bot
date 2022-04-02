@@ -1,12 +1,14 @@
 # coindcx-trading-bot
 It's a nodejs trading bot that uses infinite grid trading strategy 
 
+![Webserver UI](https://miro.medium.com/max/971/1*TNhagbbZ4OZAympHaWDH5g.png 'Webserver UI')
+
 If you want to see backtested results checkout: 
 https://github.com/adarsh-chouhan-au8/Effective-DCA-Strategy-Crypto
 
 ## How to use
 ### install packages
-cd to your project root and Run npm install it will install all required node modules
+cd to your project root and run npm install. It will install all required node modules
 ```
 npm install
 ```
@@ -34,7 +36,7 @@ Add as many levels and crypto pairs you require. The bot is designed to work sim
 
 ### Let's run it!
 
-for debugging purposes you can run:
+for debugging  you can run:
 ```
 node app.js
 ```
