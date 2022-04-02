@@ -19,13 +19,14 @@ expect.
 I strongly recommend you to have coding and Nodejs knowledge. Do not
 hesitate to read the source code and understand the mechanism of this bot.
 ## How to use
-### install packages
+### Install packages
 cd to your project root and run npm install. It will install all required node modules
 ```
 npm install
 ```
 
-### configuration
+### Configuration
+Sample .env file
 ```
 key = your key
 secret = your secret
@@ -36,7 +37,7 @@ password =
 database = trading_bot
 ```
 Get your Coindcx Api key and secret from your profile and fill it in .env.
-If you wish recieve push notifications for every buy and sell orders you can fill the pushbullet token too or else leave it empty
+If you wish to receive push notifications for every buy and sell orders fill the push bullet token, else leave it empty
 
 Get one frome here:
 https://www.pushbullet.com/#settings
