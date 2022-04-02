@@ -222,15 +222,12 @@ const master = async (dataObj) => {
 
 master(testingDataObj)
 
-
-
-
 setInterval(function () {
     console.log(('code is running successfully!'))
     apiConnect.pushBulletNoti('code is running succesfully!')
 }, 60000 * 60 * 24)
 
-// (async () => console.log(await getCandles(3)))();
+
 
 
 
