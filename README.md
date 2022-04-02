@@ -6,6 +6,18 @@ It's a nodejs trading bot that uses infinite grid trading strategy
 If you want to backtest this strategy for different cryptos checkout: 
 https://github.com/adarsh-chouhan-au8/Effective-DCA-Strategy-Crypto
 
+## Disclaimer
+
+This bot is for educational purposes only. Do not risk money which
+you are afraid to lose. USE IT AT YOUR OWN RISK. THE AUTHORS
+AND ALL AFFILIATES ASSUME NO RESPONSIBILITY FOR YOUR TRADING RESULTS.
+
+Always start by running a trading bot in Dry-run and do not engage money
+before you understand how it works and what profit/loss you should
+expect.
+
+I strongly recommend you to have coding and Nodejs knowledge. Do not
+hesitate to read the source code and understand the mechanism of this bot.
 ## How to use
 ### install packages
 cd to your project root and run npm install. It will install all required node modules

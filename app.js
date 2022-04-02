@@ -203,7 +203,7 @@ const checkAndOrder = async (pairObj, con) => {
 }
 
 
-const master = async (dataObj) => {
+const master = async () => {
     var con = await mysql.createConnection({
         host: process.env.host,
         user: process.env.user,
@@ -220,7 +220,7 @@ const master = async (dataObj) => {
 
 }
 
-master(testingDataObj)
+master()
 
 setInterval(function () {
     console.log(('code is running successfully!'))
